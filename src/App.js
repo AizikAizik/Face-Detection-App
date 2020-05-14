@@ -5,15 +5,16 @@ import Logo from './components/logo/Logo'
 import Rank from './components/rank/Rank'
 import ImageLinkForm from './components/linkform/ImageLinkForm'
 import Particles from 'react-particles-js'
-import Clarifai from 'clarifai'
+//import Clarifai from 'clarifai'
 import FaceRecognition from './components/facerecognition/FacaRecognition'
 import SignIn from "./components/registeration/SignIn"
 import Register from "./components/registeration/Register"
+import Footer from "./components/footer/Footer"
 
 const particleOptions = {
     particles: {
         number: {
-            value: 200,
+            value: 150,
             density: {
                 enable: true,
                 value_area: 800
@@ -22,38 +23,39 @@ const particleOptions = {
     }
 }
 
-const app = new Clarifai.App({
-    apiKey: "3abddf73648e4bcba4dfe007069541c5"
-})
+const initialState = {
+    input: "",
+    imageURL: "",
+    box: {},
+    route: "signin",
+    isSignedIn: false,
+    user: {
+        id: "",
+        name: "",
+        email: "",
+        entries: 0,
+        joined: ""
+    }
+}
 
 class App extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            input: "",
-            imageURL: "",
-            box: {},
-            route: "signin",
-            isSignedIn : false,
-            user : {
-                id : "",
-                name : "",
-                email : "",
-                entries : 0,
-                joined : ""
-            }
-        }
+        this.state = initialState
+
     }
 
-    loadUserDetails = (userdata) =>{
-        this.setState({ user : {
-            id : userdata.id,
-            name : userdata.name,
-            email : userdata.email,
-            entries: userdata.entries,
-            joined: userdata.joined
-            } })
+    loadUserDetails = (userdata) => {
+        this.setState({
+            user: {
+                id: userdata.id,
+                name: userdata.name,
+                email: userdata.email,
+                entries: userdata.entries,
+                joined: userdata.joined
+            }
+        })
     }
 
     calculateFaceLocation = (data) => {
@@ -83,25 +85,34 @@ class App extends React.Component {
 
     onButtonDetect = () => {
         this.setState({imageURL: this.state.input})
-        app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input).then(
-            (response) => {
-                // do something with response
-                if (response){
-                    console.log(response)
-                    console.log(response.outputs[0].data.regions[0].region_info.bounding_box)
-                    fetch("http://localhost:3000/image", {
-                        method : "put",
-                        headers : { "content-type" : "application/json" },
-                        body : JSON.stringify({
-                            id : this.state.user.id
-                        })
-                    }).then(response => response.json())
-                        .then(count => {
-                            this.setState(Object.assign(this.state.user, { entries : count }))
-                        })
-                }
-                this.displayFaceBox(this.calculateFaceLocation(response))
+        fetch("http://localhost:3000/imageURL", {
+            method: "post",
+            headers: {"content-type": "application/json"},
+            body: JSON.stringify({
+                input: this.state.input
             })
+        })
+            .then(response => response.json())
+            .then(
+                (response) => {
+                    // do something with response
+                    if (response) {
+                        console.log(response)
+                        console.log(response.outputs[0].data.regions[0].region_info.bounding_box)
+                        fetch("http://localhost:3000/image", {
+                            method: "put",
+                            headers: {"content-type": "application/json"},
+                            body: JSON.stringify({
+                                id: this.state.user.id
+                            })
+                        }).then(response => response.json())
+                            .then(count => {
+                                this.setState(Object.assign(this.state.user, {entries: count}))
+                            })
+                            .catch(console.log)
+                    }
+                    this.displayFaceBox(this.calculateFaceLocation(response))
+                })
             .catch(err => {
                     // there was an error
                     console.log(err)
@@ -110,12 +121,12 @@ class App extends React.Component {
     }
 
     onRouteChange = (routetext) => {
-        if(routetext === "signout"){
-            this.setState({ isSignedIn : false })
-        } else if(routetext === "home"){
-            this.setState({ isSignedIn : true })
+        if (routetext === "signout") {
+            this.setState(initialState)
+        } else if (routetext === "home") {
+            this.setState({isSignedIn: true})
         }
-        this.setState( {route :  routetext} )
+        this.setState({route: routetext})
     }
 
 
@@ -124,7 +135,7 @@ class App extends React.Component {
         return (
             <div className="App">
                 <Particles className="particles" params={particleOptions}/>
-                <Navigation onRouteChange= { this.onRouteChange }  isSignedIn={ isSignedIn } />
+                <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn}/>
                 {
                     route === "home" ?
                         (
@@ -134,9 +145,16 @@ class App extends React.Component {
                                 <ImageLinkForm onInputChange={this.onInputChange} onButtonDetect={this.onButtonDetect}/>
                                 <FaceRecognition box={box} imageURL={imageURL}/>
                             </div>
-                        ) : ( route === "signin" ) ?
-                        <SignIn loadUserDetails = { this.loadUserDetails } onRouteChange={this.onRouteChange}/>
-                        : <Register onRouteChange={this.onRouteChange} loadUserDetails = {this.loadUserDetails} />
+                        ) : (route === "signin") ?
+                        <div>
+                            <SignIn loadUserDetails={this.loadUserDetails} onRouteChange={this.onRouteChange}/>
+                            <Footer/>
+                        </div>
+                        : <div>
+                            <Register onRouteChange={this.onRouteChange} loadUserDetails={this.loadUserDetails}/>
+                            <Footer/>
+                        </div>
+
                 }
             </div>
         )

@@ -37,6 +37,12 @@ class SignIn extends React.Component {
                 if(user.id){
                     this.props.loadUserDetails(user);
                     this.props.onRouteChange('home');
+                } else{
+                    if(this.state.signInEmail === "" && this.state.signInPassword === ""){
+                        alert("One or more fields empty\nplease fill out all fields")
+                    } else{
+                        alert("Wrong Email or Password\nplease fill in the correct details")
+                    }
                 }
             })
     }

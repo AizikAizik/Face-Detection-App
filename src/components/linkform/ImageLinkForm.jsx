@@ -10,7 +10,7 @@ function ImageLinkForm({ onInputChange, onButtonDetect }) {
                        </p>
                        <div className ="center">
                                 <div className ="form center pa4 br3 shadow-5">
-                                        <input type="url" className = "f4 pa2 w-70 center" onChange = { onInputChange } />
+                                        <input type="url" className = "f4 pa2 w-70 center" onChange = { onInputChange } required={true} />
                                         <button className ="w-30 grow link f4 ph3 pv2 dib white bg-light-purple" onClick = { onButtonDetect }>Detect</button>
                                 </div>
                        </div>

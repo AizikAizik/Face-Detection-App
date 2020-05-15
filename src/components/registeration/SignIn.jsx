@@ -24,7 +24,7 @@ class SignIn extends React.Component {
     }
 
     onSubmitEvent =() =>{
-        fetch("http://localhost:3000/signin", {
+        fetch("https://still-wildwood-80448.herokuapp.com/signin", {
             method : "post",
             headers : { "content-type" :  "application/json" },
             body : JSON.stringify({
@@ -44,7 +44,7 @@ class SignIn extends React.Component {
                         alert("Wrong Email or Password\nplease fill in the correct details")
                     }
                 }
-            })
+            }).catch(err => console.log(err))
     }
 
     render() {

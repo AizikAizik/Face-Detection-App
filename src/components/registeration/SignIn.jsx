@@ -82,6 +82,5 @@ class SignIn extends React.Component {
         )
     }
 }
-//SignIn.propTypes = {onRouteChange: PropTypes.any}
 
 export default SignIn

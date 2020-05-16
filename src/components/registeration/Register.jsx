@@ -91,6 +91,5 @@ class Register extends React.Component {
     }
 }
 
-//Register.propTypes = {onRouteChange: PropTypes.any}
 
 export default Register

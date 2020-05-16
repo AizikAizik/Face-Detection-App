@@ -85,7 +85,7 @@ class App extends React.Component {
 
     onButtonDetect = () => {
         this.setState({imageURL: this.state.input})
-        fetch("https://still-wildwood-80448.herokuapp.com/imageURL", {
+        fetch("http://localhost:3000/imageURL", {
             method: "post",
             headers: {"content-type": "application/json"},
             body: JSON.stringify({
@@ -97,7 +97,7 @@ class App extends React.Component {
                 (response) => {
                     // do something with response
                     if (response) {
-                        fetch("https://still-wildwood-80448.herokuapp.com/image", {
+                        fetch("http://localhost:3000/image", {
                             method: "put",
                             headers: {"content-type": "application/json"},
                             body: JSON.stringify({

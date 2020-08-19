@@ -6,7 +6,7 @@ function ImageLinkForm({ onInputChange, onButtonDetect }) {
         return (
                <div className = "">
                        <p className = "f3">
-                               { "This magic Brain will detect faces in a picture. Give it a try" }
+                               { "Copy link to a face image from Google and paste into the textfield and click detect" }
                        </p>
                        <div className ="center">
                                 <div className ="form center pa4 br3 shadow-5">
